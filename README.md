@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Industrial Knowledge Intelligence Admin Document Ingestion
 
 A complete Python 3.11+ FastAPI admin dashboard for uploading and indexing industrial documents with Qdrant vector storage.
@@ -64,3 +65,6 @@ pytest
 - Qdrant collection is created only if missing
 - Original file deletion also removes Qdrant points by `document_id`
 - Missing OCR support does not prevent startup, but image OCR is only used if `pytesseract` and `Pillow` are available
+=======
+# omnicient
+>>>>>>> 8f2a7268cdb61bf259592752bf5f4f7de07d0a66
