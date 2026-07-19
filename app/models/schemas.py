@@ -44,6 +44,13 @@ class ChatResponse(BaseModel):
     sources: list[ChatSource]
     context: str
 
+class ChatHistoryItem(BaseModel):
+    id: str
+    question: str
+    answer: str
+    sources: list[ChatSource]
+    timestamp: str
+
 class QdrantHealthResponse(BaseModel):
     status: str
     collection: str

@@ -17,6 +17,7 @@ class Settings:
     UPLOAD_DIR: Path = Path(os.getenv("UPLOAD_DIR", "storage/uploads"))
     TEMP_DIR: Path = Path(os.getenv("TEMP_DIR", "storage/temp"))
     STATUS_FILE: Path = Path(os.getenv("STATUS_FILE", "storage/status/documents.json"))
+    HISTORY_FILE: Path = Path(os.getenv("HISTORY_FILE", "storage/history.json"))
     MAX_UPLOAD_SIZE_MB: int = int(os.getenv("MAX_UPLOAD_SIZE_MB", "100"))
     APP_HOST: str = os.getenv("APP_HOST", "127.0.0.1")
     APP_PORT: int = int(os.getenv("APP_PORT", "8000"))

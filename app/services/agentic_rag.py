@@ -104,16 +104,17 @@ class GraphSearchTool(BaseTool):
             return {"context": "", "sources": [], "document_ids": document_ids}
 
         context = "Graph facts:\n" + "\n".join(facts)
+        graph_doc_id = str(document_ids[0]) if document_ids else "graph"
         sources = [
             {
-                "document_id": str(document_id),
+                "document_id": graph_doc_id,
                 "chunk_index": 0,
                 "original_filename": "graph",
                 "text": fact,
                 "score": None,
                 "citation": f"graph:{index}",
             }
-            for index, (fact, document_id) in enumerate(zip(facts, [document_ids[0]] * len(facts)), start=1)
+            for index, fact in enumerate(facts, start=1)
         ]
         return {"context": context, "sources": sources, "document_ids": document_ids}
 
@@ -350,6 +351,8 @@ class ToolRegistry:
         lowered_query = query.lower()
         scored_tools: list[tuple[int, BaseTool]] = []
         for tool in self.tools:
+            if tool.name == "knowledge_gap_detector":
+                continue
             score = self._score_tool(tool, lowered_query)
             if score > 0:
                 scored_tools.append((score, tool))
@@ -415,7 +418,7 @@ class AgenticRAGService:
             tools = [self.registry.get_tool("vector_search") or self.registry.tools[0]]
 
         used_tool_names: set[str] = set()
-        for index, tool in enumerate(tools[:4], start=1):
+        for index, tool in enumerate(tools, start=1):
             if tool.name in used_tool_names:
                 continue
             used_tool_names.add(tool.name)
@@ -430,8 +433,20 @@ class AgenticRAGService:
             result = tool.execute(question, state)
             state = self._merge_state(state, result)
 
-            if not state.get("sources") and tool.name == "knowledge_gap_detector":
+            if len(state.get("sources", [])) >= top_k * 2:
                 break
+
+        if not state.get("sources"):
+            knowledge_tool = self.registry.get_tool("knowledge_gap_detector")
+            if knowledge_tool:
+                self.reasoning_trace.append(
+                    {
+                        "step": len(self.reasoning_trace) + 1,
+                        "tool": knowledge_tool.name,
+                        "reason": knowledge_tool.description,
+                    }
+                )
+                state = self._merge_state(state, knowledge_tool.execute(question, state))
 
         context = "\n\n---\n\n".join(state.get("context_blocks", [])) if state.get("context_blocks") else ""
         sources = self._dedupe_sources(state.get("sources", []))
