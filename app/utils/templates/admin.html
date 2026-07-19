@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Industrial Knowledge Admin</title>
+  <link rel="stylesheet" href="/static/css/admin.css" />
+</head>
+<body>
+  <main class="dashboard">
+    <header class="header">
+      <div>
+        <h1>Document Ingestion Admin</h1>
+        <p>Upload files and index them into Qdrant.</p>
+      </div>
+      <div>
+        <a href="/chat" class="header-link">Chat</a>
+        <span id="connection-status" class="status-pill">Connecting...</span>
+      </div>
+    </header>
+
+    <section class="upload-panel">
+      <div id="drop-zone" class="drop-zone">
+        <p>Drag files here or click to select</p>
+        <input id="file-input" type="file" multiple hidden />
+      </div>
+      <div class="upload-actions">
+        <button id="select-files">Select Files</button>
+        <button id="upload-files" disabled>Upload</button>
+      </div>
+      <div id="file-list" class="file-list"></div>
+    </section>
+
+    <section class="document-panel">
+      <div class="panel-header">
+        <h2>Documents</h2>
+        <div>
+          <button id="refresh-documents">Refresh</button>
+        </div>
+      </div>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Filename</th>
+              <th>Type</th>
+              <th>Size</th>
+              <th>Date</th>
+              <th>Status</th>
+              <th>Chunks</th>
+              <th>Error</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="documents-body"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <script src="/static/js/admin.js"></script>
+</body>
+</html>

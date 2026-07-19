@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Knowledge Chat</title>
+  <link rel="stylesheet" href="/static/css/admin.css" />
+</head>
+<body>
+  <main class="dashboard">
+    <header class="header">
+      <div>
+        <h1>Knowledge Chat</h1>
+        <p>Ask a question and retrieve grounded answers from Qdrant.</p>
+      </div>
+      <div>
+        <a href="/" class="header-link">Admin</a>
+      </div>
+    </header>
+
+    <section class="upload-panel">
+      <label for="question-input" class="input-label">Question</label>
+      <textarea id="question-input" rows="4" placeholder="Type your question here..."></textarea>
+      <button id="ask-button">Ask</button>
+      <div id="chat-status" class="status-pill">Ready</div>
+    </section>
+
+    <section class="document-panel">
+      <div class="panel-header">
+        <h2>Answer</h2>
+      </div>
+      <div id="answer-box" class="answer-box">Submit a question to see a grounded response.</div>
+    </section>
+
+    <section class="document-panel">
+      <div class="panel-header">
+        <h2>Sources</h2>
+      </div>
+      <div id="sources-box" class="sources-box">No sources yet.</div>
+    </section>
+  </main>
+
+  <script src="/static/js/chat.js"></script>
+</body>
+</html>
