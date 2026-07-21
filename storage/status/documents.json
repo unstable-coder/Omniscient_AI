@@ -402,17 +402,69 @@
     "error": "",
     "content_hash": "47df7214a422d2d66245ffd98e15729a56b6c3db305f1a242db76c86db449ccf"
   },
-  "f096a85c4aa44704a093c185d64bb13a": {
-    "document_id": "f096a85c4aa44704a093c185d64bb13a",
+  "62a40fd1dce44007a4c5d51684b6c4cc": {
+    "document_id": "62a40fd1dce44007a4c5d51684b6c4cc",
+    "original_filename": "Compliance_Report_5.pdf",
+    "stored_filename": "abae62746376498abc045d38959c89bf.pdf",
+    "file_type": "application/pdf",
+    "mime_type": "application/pdf",
+    "size": 1932,
+    "uploaded_at": "2026-07-20 13:09:35.379036",
+    "status": "INDEXED",
+    "chunk_count": 1,
+    "error": "",
+    "content_hash": "c4bdd13bdcd448da28918d27120bf5e193f6ea85db19e79657048963e7efd9d2"
+  },
+  "402f99745f10476c95c2876976e40864": {
+    "document_id": "402f99745f10476c95c2876976e40864",
     "original_filename": "Equipment_Register.xlsx",
-    "stored_filename": "a744399f59e24c47ac586fbc7132bb61.xlsx",
+    "stored_filename": "7e12c2f0593a4da4be971569b72cbb88.xlsx",
     "file_type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     "mime_type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     "size": 23088,
-    "uploaded_at": "2026-07-19 10:15:48.635925",
+    "uploaded_at": "2026-07-20 17:01:31.284437",
     "status": "FAILED",
     "chunk_count": 0,
     "error": "",
     "content_hash": "6825f1a2327433dcd3a7e5cc93b644b58292b45d714c6cba209c5e40fe89fe76"
+  },
+  "8e59e6e945cd4551929b2fc1978dedc9": {
+    "document_id": "8e59e6e945cd4551929b2fc1978dedc9",
+    "original_filename": "Cooling_Tower_CT01_1.pdf",
+    "stored_filename": "31e7be22eee445248835ccd2737f9ee2.pdf",
+    "file_type": "application/pdf",
+    "mime_type": "application/pdf",
+    "size": 5056,
+    "uploaded_at": "2026-07-20 17:23:43.897061",
+    "status": "INDEXED",
+    "chunk_count": 1,
+    "error": "",
+    "content_hash": "7bfe2044ff8be4e0450bec0c426dc1c84916b86afe728436dc9d46adee8d42b3"
+  },
+  "ae0306ac8e934854a73d6f2e06e14746": {
+    "document_id": "ae0306ac8e934854a73d6f2e06e14746",
+    "original_filename": "Cooling_Tower_CT01_3.pdf",
+    "stored_filename": "14fcd0146e7e404f9739b18abf944754.pdf",
+    "file_type": "application/pdf",
+    "mime_type": "application/pdf",
+    "size": 5057,
+    "uploaded_at": "2026-07-20 17:58:36.918852",
+    "status": "INDEXED",
+    "chunk_count": 1,
+    "error": "",
+    "content_hash": "f0a09591adf63b8daddab36a98a638e871f29963f2eb8be6f6ead54ff4a8bd2e"
+  },
+  "5369df701b7c44c89b43baaca15c5192": {
+    "document_id": "5369df701b7c44c89b43baaca15c5192",
+    "original_filename": "Purchase_Order_1.pdf",
+    "stored_filename": "d5271e3647e94c1ca22d7725a39e53f1.pdf",
+    "file_type": "application/pdf",
+    "mime_type": "application/pdf",
+    "size": 2109,
+    "uploaded_at": "2026-07-21 08:48:12.911779",
+    "status": "INDEXED",
+    "chunk_count": 1,
+    "error": "",
+    "content_hash": "c1464fd383f060729d9f80a056f068f4aece72f1b846fe751aced6b03d942ec9"
   }
 }

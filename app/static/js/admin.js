@@ -74,12 +74,41 @@ uploadFilesButton.addEventListener("click", async () => {
   }
 });
 
+const ROWS_PER_PAGE = 10;
+let allDocuments = [];
+let currentPage = 1;
+
 async function loadDocuments() {
   try {
     const response = await fetch("/api/admin/documents");
     const payload = await response.json();
-    documentsBody.innerHTML = payload.documents.map(doc => {
-      return `<tr>
+
+    // Reverse order (latest first)
+    allDocuments = [...payload.documents].sort((a, b) => {
+      return new Date(b.uploaded_at) - new Date(a.uploaded_at);
+    });
+
+    currentPage = 1;
+    renderTable();
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+function renderTable() {
+  const totalPages = Math.ceil(allDocuments.length / ROWS_PER_PAGE);
+
+  if (currentPage > totalPages && totalPages > 0) {
+    currentPage = totalPages;
+  }
+
+  const start = (currentPage - 1) * ROWS_PER_PAGE;
+  const end = start + ROWS_PER_PAGE;
+
+  const docs = allDocuments.slice(start, end);
+
+  documentsBody.innerHTML = docs.map(doc => `
+      <tr>
         <td>${doc.original_filename}</td>
         <td>${doc.file_type}</td>
         <td>${(doc.size / 1024).toFixed(1)} KB</td>
@@ -91,11 +120,48 @@ async function loadDocuments() {
           <button class="action-button" onclick="retryDocument('${doc.document_id}')">Retry</button>
           <button class="action-button" onclick="deleteDocument('${doc.document_id}')">Delete</button>
         </td>
-      </tr>`;
-    }).join("");
-  } catch (err) {
-    console.error(err);
+      </tr>
+  `).join("");
+
+  renderPagination(totalPages);
+}
+
+function renderPagination(totalPages) {
+  let pagination = document.getElementById("pagination");
+
+  if (!pagination) {
+    pagination = document.createElement("div");
+    pagination.id = "pagination";
+    pagination.style.marginTop = "20px";
+    pagination.style.display = "flex";
+    pagination.style.justifyContent = "center";
+    pagination.style.alignItems = "center";
+    pagination.style.gap = "10px";
+
+    document.querySelector("table").after(pagination);
   }
+
+  pagination.innerHTML = `
+      <button ${currentPage === 1 ? "disabled" : ""} id="prev-page">
+          Previous
+      </button>
+
+      <span>Page ${totalPages === 0 ? 0 : currentPage} of ${totalPages}</span>
+
+      <button ${currentPage === totalPages || totalPages === 0 ? "disabled" : ""} id="next-page">
+          Next
+      </button>
+  `;
+
+  document.getElementById("prev-page")?.addEventListener("click", () => {
+    currentPage--;
+    renderTable();
+  });
+
+  document.getElementById("next-page")?.addEventListener("click", () => {
+    currentPage++;
+    renderTable();
+  });
 }
 
 window.retryDocument = async function(documentId) {
@@ -113,12 +179,12 @@ refreshButton.addEventListener("click", loadDocuments);
 async function checkHealth() {
   try {
     const response = await fetch("/api/admin/qdrant-health");
+    console.log('Health response:', response);
     const payload = await response.json();
+    console.log('Health payload:', payload);
     if (payload.status === "ok") {
-      setConnectionStatus(`Qdrant OK (${payload.collection})`, true);
-    } else {
-      setConnectionStatus(`Qdrant error`, false);
-    }
+      setConnectionStatus(`Connected`, true);
+    } 
   } catch {
     setConnectionStatus("Qdrant connection failed", false);
   }

@@ -6,7 +6,7 @@ from fastapi.staticfiles import StaticFiles
 from app.api.admin import router as admin_router
 from app.api.chat import router as chat_router
 from app.api.history import router as history_router
-from app.config import settings
+from app.routes.dashboard import router as dashboard_router
 from pathlib import Path
 
 app = FastAPI()
@@ -18,6 +18,7 @@ templates = Jinja2Templates(directory=Path(__file__).parent / "utils" / "templat
 app.include_router(admin_router, prefix="/api/admin")
 app.include_router(chat_router, prefix="/api/chat")
 app.include_router(history_router, prefix="/api")
+app.include_router(dashboard_router, prefix="/api")
 
 @app.get("/")
 def home(request: Request):

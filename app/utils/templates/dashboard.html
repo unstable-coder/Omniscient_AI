@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Omniscient Dashboard</title>
+
+    <link rel="stylesheet" href="/static/css/dashboard.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+</head>
+
+<body>
+
+<nav class="navbar">
+
+    <div class="logo">
+
+        <h2>Omniscient AI</h2>
+
+    </div>
+
+    <div class="nav-links">
+<a href="/api/dashboard/dashboard"
+           class="active">
+            Dashboard
+        </a>
+        
+
+        <a href="/chat">Chat</a>
+
+        <a href="/">Documents</a>
+
+    </div>
+
+    <div class="refresh-status"
+         id="refresh-indicator">
+
+        Refreshing every 5 sec
+
+    </div>
+
+</nav>
+
+<main class="container">
+
+    <section class="page-header">
+
+        <h1>System Analytics Dashboard</h1>
+
+        <p>
+
+            Monitor document ingestion, retrieval performance,
+            embeddings, and knowledge graph statistics.
+
+        </p>
+
+    </section>
+
+    <section
+        class="metrics-grid"
+        id="metrics-grid">
+
+    </section>
+
+    <section class="charts-grid">
+
+        <div class="chart-card">
+
+            <div class="card-header">
+
+                <h3>Document Status</h3>
+
+                <span class="badge">
+                    Live
+                </span>
+
+            </div>
+
+            <canvas id="statusChart"></canvas>
+
+        </div>
+
+        <div class="chart-card">
+            <div class="card-header">
+                <h3>System Performance</h3>
+                <span class="badge">
+                    Real Time
+                </span>
+
+            </div>
+
+            <canvas id="metricsChart"></canvas>
+
+        </div>
+
+    </section>
+
+    <section class="table-card">
+        <div class="table-header">
+            <h3>Recent Documents</h3>
+            <button>
+                Refresh
+            </button>
+        </div>
+        <table>
+            <thead>
+
+            <tr>
+
+                <th>Document</th>
+
+                <th>Status</th>
+
+                <th>Chunks</th>
+
+                <th>Entities</th>
+
+                <th>Relations</th>
+
+                <th>Uploaded</th>
+
+            </tr>
+
+            </thead>
+
+            <tbody id="documents-body">
+
+            </tbody>
+
+        </table>
+
+    </section>
+
+</main>
+
+<script src="/static/js/dashboard.js"></script>
+
+</body>
+
+</html>

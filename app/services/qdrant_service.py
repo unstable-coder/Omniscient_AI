@@ -65,7 +65,22 @@ class QdrantService:
         )
     def health(self) -> dict[str, Any]:
         try:
-            collection_info = self.client.get_collection(collection_name=self.collection_name)
-            return {"status": "ok", "collection": self.collection_name, "embedding_dim": collection_info.vectors.size if collection_info.vectors else None}
+            collection_info = self.client.get_collection(collection_name=self.collection_name )
+            embedding_dim = None
+            vectors = collection_info.config.params.vectors
+            if hasattr(vectors, "size"):
+                embedding_dim = vectors.size
+
+            return {
+                "status": "ok",
+                "collection": self.collection_name,
+                "embedding_dim": embedding_dim,
+            }
+
         except Exception as exc:
-            return {"status": "error", "collection": self.collection_name, "embedding_dim": None, "error": str(exc)}
+            return {
+                "status": "error",
+                "collection": self.collection_name,
+                "embedding_dim": None,
+                "error": str(exc),
+            }

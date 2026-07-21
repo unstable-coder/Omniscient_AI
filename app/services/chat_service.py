@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import time
 from typing import Any
 
 from langchain_core.output_parsers import StrOutputParser
@@ -11,6 +12,7 @@ from app.services.agentic_rag import AgenticRAGService
 from app.services.embedding_service import EmbeddingService
 from app.services.graph_retrieval_service import GraphRetrievalService
 from app.services.history_service import HistoryService
+# from app.services.metrics_service import metrics_service
 from app.services.qdrant_service import QdrantService
 
 class ChatService:
@@ -43,18 +45,19 @@ class ChatService:
                 (
                     "system",
                     """
-You are a retrieval-grounded assistant.
+You are Omniscient, an AI-powered industrial knowledge assistant.
 
-Answer the user's question using only the supplied context.
+Answer ONLY using the provided context.
 
 Rules:
-1. Do not invent facts.
-2. If the context does not contain enough information, say:
+1. Never invent facts or use external knowledge.
+2. If the answer exists, respond clearly and concisely.
+3. If the exact answer is unavailable but related information exists, state that it is not explicitly available and summarize the relevant information.
+4. If the context contains conflicting information, mention the conflict without guessing.
+5. For questions about operational status, maintenance status, or compliance, report them only if explicitly stated in the context.
+6. If the context is unrelated or insufficient, reply:
    "I could not find enough information in the indexed documents."
-3. Cite supporting chunks using their labels, for example [1] or [2].
-4. Keep the answer concise and factual.
-5. Do not claim information that is absent from the context.
-6. If multiple context chunks conflict, mention the conflict.
+7. Cite supporting chunks using labels such as [1], [2], and [3].
 """.strip(),
                 ),
                 (
@@ -76,28 +79,21 @@ Answer using only the context above.
         self.chain = (
             self.prompt
             | self.llm
-            | StrOutputParser()
+            | StrOutputParser() 
         )
 
-    def answer(
-        self,
-        question: str,
-        top_k: int = 1,
-    ) -> dict[str, Any]:
-
+    def answer(self, question: str, top_k: int = 1,) -> dict[str, Any]:
         question = question.strip()
-
         if not question:
-            raise ValueError(
-                "Question may not be empty."
-            )
+            raise ValueError("Question may not be empty.")
 
         if top_k < 1:
-            raise ValueError(
-                "top_k must be at least 1."
-            )
+            raise ValueError( "top_k must be at least 1.")
 
+        start = time.perf_counter()
         agent_result = self.agent.run(question, top_k=top_k)
+        elapsed = (time.perf_counter() - start) * 1000
+        # metrics_service.record_response_time(elapsed)
         context = agent_result.get("context", "")
         sources = agent_result.get("sources", [])
 

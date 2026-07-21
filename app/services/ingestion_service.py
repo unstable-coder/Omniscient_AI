@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import hashlib
 import logging
+import time
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from uuid import uuid4, uuid5, NAMESPACE_URL
@@ -19,8 +20,9 @@ from app.services.neo4j_loader import Neo4jLoader
 from app.services.qdrant_service import QdrantService
 from app.services.status_service import StatusService
 from app.services.storage_service import StorageService
+from app.services.metrics_service import metrics_service
 from app.utils.file_utils import sanitize_filename
-
+from concurrent.futures import TimeoutError
 logger = logging.getLogger(__name__)
 
 
@@ -143,17 +145,20 @@ class IngestionService:
                     error="No extractable content found.",
                 )
                 return
-
             chunks = self.chunking.chunk_units(units)
-
+            print("2. Chunking completed", len(chunks), "chunks created")
             embedding_result, graph_entities = self._run_parallel_processing(
                 document_id,
                 status_record,
                 chunks,
             )
+            print("3. Parallel processing completed")
 
             self.qdrant.upsert_vectors(embedding_result)
+            print("4. Qdrant completed")
+
             self._ingest_graph(document_id, graph_entities)
+            print("5. Neo4j completed")
 
             self.status_service.update_document(
                 document_id,
@@ -169,29 +174,32 @@ class IngestionService:
                 error=str(exc),
             )
 
-    def _run_parallel_processing(
-        self,
-        document_id: str,
-        status_record: DocumentStatus,
-        chunks: list[ContentUnit],
-    ) -> tuple[list[dict[str, object]], list[dict[str, object]]]:
-        embedding_future = self.executor.submit(
-            self._build_payloads,
-            document_id,
-            status_record,
-            chunks,
-        )
+    def _run_parallel_processing(self, document_id: str,status_record,chunks,):
+        print("Submitting embedding thread...")
+
+        embedding_future = self.executor.submit(self._build_payloads,document_id, status_record, chunks, )
+
+        print("Submitting entity thread...")
+
         entity_future = self.executor.submit(
-            self._extract_entities,
-            document_id,
-            chunks,
-        )
+                self._extract_entities,
+                document_id,
+                chunks,
+            )
 
         try:
-            payloads = embedding_future.result()
-            entities = entity_future.result()
-        except Exception as exc:
-            logger.exception("Parallel ingestion failed for document %s: %s", document_id, exc)
+            print("Waiting for embedding...")
+            payloads = embedding_future.result(timeout=120)
+            print("Embedding finished.")
+
+            print("Waiting for entity extraction...")
+            entities = entity_future.result(timeout=120)
+            print("Entity extraction finished.")
+
+        except TimeoutError:
+            print("TIMEOUT!")
+            print("Embedding done:", embedding_future.done())
+            print("Entity done:", entity_future.done())
             raise
 
         return payloads, entities
@@ -204,9 +212,17 @@ class IngestionService:
     ) -> list[dict[str, object]]:
         payloads = []
 
-        # Embed all chunks in one batch instead of one model call per chunk.
+        print("ENTER _build_payloads")
+
         texts = [chunk.text for chunk in chunks]
+        print("Texts:", len(texts))
+
+        print("Calling embed_texts()")
+        start = time.perf_counter()
         vectors = self.embedding_service.embed_texts(texts)
+        elapsed = (time.perf_counter() - start) * 1000
+        # metrics_service.record_embedding_time(elapsed)
+        print("embed_texts() returned", len(vectors))
 
         for index, (chunk, vector) in enumerate(
             zip(chunks, vectors),

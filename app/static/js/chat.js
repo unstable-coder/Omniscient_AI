@@ -1,27 +1,63 @@
 const questionInput = document.getElementById('question-input');
 const askButton = document.getElementById('ask-button');
-const answerBox = document.getElementById('answer-box');
-const sourcesBox = document.getElementById('sources-box');
+const chatWindow = document.getElementById("chat-window");
 const historyBox = document.getElementById('history-box');
 const chatStatus = document.getElementById('chat-status');
 const clearHistoryButton = document.getElementById('clear-history');
-
-function renderSources(sources) {
-  if (!sources.length) {
-    sourcesBox.textContent = 'No supporting chunks found.';
-    return;
-  }
-
-  sourcesBox.innerHTML = sources
-    .map(source => `
-      <div class="source-item">
-        <strong>${source.citation}</strong>
-        <p>${source.text}</p>
-      </div>
-    `)
-    .join('');
+const emptyState = document.getElementById("empty-state");
+function addUserMessage(text) {
+    chatWindow.innerHTML += `
+        <div class="message">
+            <div class="avatar user">You</div>
+            <div class="message-body">
+                <div class="bubble user-bubble">${text}</div>
+            </div>
+        </div>
+    `;
+    chatWindow.scrollTop = chatWindow.scrollHeight;
 }
 
+function addAssistantMessage(answer, sources = []) {
+
+    // Convert Markdown to HTML
+    const renderedAnswer = marked.parse(answer);
+
+    let html = `
+        <div class="message">
+            <div class="avatar ai">AI</div>
+            <div class="message-body">
+                <div class="bubble assistant-bubble markdown-body">
+                    ${renderedAnswer}
+    `;
+
+    if (sources.length) {
+
+        html += `
+            <details class="sources">
+                <summary>Sources (${sources.length})</summary>
+        `;
+
+        sources.forEach(source => {
+            html += `
+                <div class="source">
+                    <strong>${source.citation}</strong>
+                    <p>${source.text}</p>
+                </div>
+            `;
+        });
+
+        html += `</details>`;
+    }
+
+    html += `
+                </div>
+            </div>
+        </div>
+    `;
+
+    chatWindow.innerHTML += html;
+    chatWindow.scrollTop = chatWindow.scrollHeight;
+}
 function renderHistory(history) {
   if (!history.length) {
     historyBox.textContent = 'No history yet.';
@@ -39,14 +75,17 @@ function renderHistory(history) {
 }
 
 function showHistoryItem(history) {
-  if (!history) {
-    return;
-  }
 
-  questionInput.value = history.question;
-  answerBox.textContent = history.answer;
-  renderSources(history.sources);
-  chatStatus.textContent = 'Loaded from history';
+    chatWindow.innerHTML = "";
+
+    addUserMessage(history.question);
+
+    addAssistantMessage(
+        history.answer,
+        history.sources
+    );
+
+    chatStatus.textContent = "Loaded from history";
 }
 
 async function loadHistory() {
@@ -71,10 +110,9 @@ async function askQuestion() {
     return;
   }
 
-  chatStatus.textContent = 'Thinking...';
+  askButton.textContent = 'Searching...';
   askButton.disabled = true;
-  answerBox.textContent = '';
-  sourcesBox.textContent = '';
+  addUserMessage(question);
   try {
     const response = await fetch('/api/chat/ask', {
       method: 'POST',
@@ -89,8 +127,7 @@ async function askQuestion() {
     }
 
     const payload = await response.json();
-    answerBox.textContent = payload.answer;
-    renderSources(payload.sources);
+    addAssistantMessage(payload.answer, payload.sources);
     chatStatus.textContent = 'Completed';
     await loadHistory();
   } catch (err) {
@@ -110,8 +147,7 @@ async function clearHistory() {
       return;
     }
     await loadHistory();
-    answerBox.textContent = '';
-    sourcesBox.textContent = 'No sources yet.';
+    chatWindow.innerHTML = "";
     chatStatus.textContent = 'History cleared';
   } catch {
     chatStatus.textContent = 'Could not clear history';
@@ -141,12 +177,19 @@ historyBox.addEventListener('click', event => {
 if (clearHistoryButton) {
   clearHistoryButton.addEventListener('click', clearHistory);
 }
-askButton.addEventListener('click', askQuestion);
+askButton?.addEventListener('click', askQuestion);
 questionInput.addEventListener('keydown', event => {
   if (event.key === 'Enter' && !event.shiftKey) {
     event.preventDefault();
+    questionInput.innerHTML = ''
     askQuestion();
+    
   }
 });
-
 loadHistory();
+document.getElementById("new-chat").addEventListener("click", () => {
+    window.location.reload();
+});
+if (emptyState) {
+   
+}

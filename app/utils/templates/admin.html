@@ -7,57 +7,177 @@
   <link rel="stylesheet" href="/static/css/admin.css" />
 </head>
 <body>
-  <main class="dashboard">
-    <header class="header">
-      <div>
-        <h1>Document Ingestion Admin</h1>
-        <p>Upload files and index them into Qdrant.</p>
-      </div>
-      <div>
-        <a href="/chat" class="header-link">Chat</a>
-        <span id="connection-status" class="status-pill">Connecting...</span>
-      </div>
-    </header>
 
-    <section class="upload-panel">
-      <div id="drop-zone" class="drop-zone">
-        <p>Drag files here or click to select</p>
-        <input id="file-input" type="file" multiple hidden />
-      </div>
-      <div class="upload-actions">
-        <button id="select-files">Select Files</button>
-        <button id="upload-files" disabled>Upload</button>
-      </div>
-      <div id="file-list" class="file-list"></div>
-    </section>
+<!-- ================= Navbar ================= -->
 
-    <section class="document-panel">
-      <div class="panel-header">
-        <h2>Documents</h2>
+<nav class="navbar">
+
+    <div class="nav-left">
+        <h2>Omniscient AI</h2>
+    </div>
+
+    <div class="nav-center">
+       
+        <a href="/api/dashboard">Dashboard</a>
+         <a href="/chat">Chat</a>
+        <a href="#" class="active">Documents</a>
+    </div>
+
+    <div class="nav-right">
+        <span id="connection-status" class="status-pill">
+            ● Connected
+        </span>
+    </div>
+
+</nav>
+
+<!-- ================= Main ================= -->
+
+<main class="container">
+
+    <!-- Page Heading -->
+
+    <section class="page-header">
+
         <div>
-          <button id="refresh-documents">Refresh</button>
+            <h1>Knowledge Repository</h1>
+            <p>Manage uploaded documents and knowledge sources.</p>
         </div>
-      </div>
-      <div class="table-wrapper">
-        <table>
-          <thead>
-            <tr>
-              <th>Filename</th>
-              <th>Type</th>
-              <th>Size</th>
-              <th>Date</th>
-              <th>Status</th>
-              <th>Chunks</th>
-              <th>Error</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody id="documents-body"></tbody>
-        </table>
-      </div>
-    </section>
-  </main>
 
-  <script src="/static/js/admin.js"></script>
+    </section>
+
+    <!-- Upload -->
+
+    <section class="upload-card">
+
+        <div class="upload-left">
+
+            <div class="upload-icon">
+                📄
+            </div>
+
+            <div>
+
+                <h3>Upload Documents</h3>
+
+                <p>
+                    PDF, DOCX, XLSX, CSV, TXT
+                </p>
+
+            </div>
+
+        </div>
+
+        <div class="upload-right">
+
+            <button id="select-files">
+                Browse Files
+            </button>
+
+            <button id="upload-files" disabled>
+                Upload
+            </button>
+
+        </div>
+
+    </section>
+
+    <!-- Drag Drop -->
+
+    <section
+        id="drop-zone"
+        class="drop-zone">
+
+        <input
+            id="file-input"
+            type="file"
+            multiple
+            hidden>
+
+        <div class="drop-content">
+
+            <h3>
+                Drag & Drop Files
+            </h3>
+
+            <p>
+                or click here to browse
+            </p>
+
+        </div>
+
+    </section>
+
+    <div
+        id="file-list"
+        class="file-list">
+    </div>
+
+    <!-- Documents -->
+
+    <section class="table-card">
+
+        <div class="table-toolbar">
+
+            <div>
+
+                <h2>Documents</h2>
+
+                <small>
+                    Uploaded knowledge sources
+                </small>
+
+            </div>
+
+            <button id="refresh-documents">
+                Refresh
+            </button>
+
+        </div>
+
+        <div class="table-wrapper">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>Filename</th>
+
+                        <th>Type</th>
+
+                        <th>Size</th>
+
+                        <th>Date</th>
+
+                        <th>Status</th>
+
+                        <th>Chunks</th>
+
+                        <th>Error</th>
+
+                        <th width="130">
+                            Actions
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody id="documents-body">
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </section>
+
+</main>
+
+<script src="/static/js/admin.js"></script>
+
 </body>
 </html>

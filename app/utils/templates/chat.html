@@ -1,54 +1,121 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Knowledge Chat</title>
-  <link rel="stylesheet" href="/static/css/chat.css" />
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Omniscient AI</title>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <link rel="stylesheet"
+          href="/static/css/chat.css">
 
 </head>
+
 <body>
-  <main class="dashboard">
-    <header class="header">
-      <div>
-        <h1>Knowledge Chat</h1>
-        <p>Ask a question and retrieve grounded answers from Qdrant.</p>
-      </div>
-      <div>
-        <a href="/" class="header-link">Admin</a>
-      </div>
-    </header>
 
-    <section class="upload-panel">
-      <label for="question-input" class="input-label">Question</label>
-      <textarea id="question-input" rows="4" placeholder="Type your question here..."></textarea>
-      <button id="ask-button">Ask</button>
-      <div id="chat-status" class="status-pill">Ready</div>
-    </section>
 
-    <section class="document-panel">
-      <div class="panel-header">
-        <h2>Answer</h2>
-      </div>
-      <div id="answer-box" class="answer-box">Submit a question to see a grounded response.</div>
-    </section>
+<nav class="navbar">
 
-    <section class="document-panel history-panel">
-      <div class="panel-header">
-        <h2>History</h2>
-        <button id="clear-history" class="history-clear">Clear</button>
-      </div>
-      <div id="history-box" class="history-box">No history yet.</div>
-    </section>
+    <div class="logo">
 
-    <section class="document-panel">
-      <div class="panel-header">
-        <h2>Sources</h2>
-      </div>
-      <div id="sources-box" class="sources-box">No sources yet.</div>
-    </section>
-  </main>
+        <h2>Omniscient AI</h2>
 
-    <script src="/static/js/chat.js"></script>
+    </div>
+
+    <div class="nav-links">
+  <a href="/api/dashboard">Dashboard</a>
+       
+
+        <a href="/chat" class="active">Chat</a>
+ <a href="/">Documents</a>
+      
+
+    </div>
+
+    <div class="nav-right">
+
+        <button id="new-chat" class="primary-btn">
+            + New Chat
+        </button>
+
+    </div>
+
+</nav>
+
+<!-- ================= MAIN ================= -->
+
+<div class="layout">
+
+    <!-- Conversation History -->
+
+    <aside class="history-panel">
+
+        <div class="panel-header">
+
+            <h3>Recent Chats</h3>
+
+            <button id="clear-history">
+                Clear
+            </button>
+        </div>
+        <div
+            id="history-box"
+            class="history-list">
+        </div>
+    </aside>
+
+    <!-- Chat -->
+
+    <main class="chat-panel">
+
+        <div class="chat-header">
+
+            <div>
+
+                <h1>Industrial Knowledge Assistant</h1>
+
+            </div>
+
+            <span
+                id="chat-status"
+                class="status">
+
+                Ready
+
+            </span>
+
+        </div>
+
+       <div id="chat-window" class="chat-window">
+
+    <div id="empty-state" class="empty-state">
+        <div class="empty-icon">🤖</div>
+        <h2>Omniscient is ready to serve</h2>
+        <p></p>
+    </div>
+
+</div>
+
+<div class="input-container">
+
+    <textarea
+        id="question-input"
+        placeholder="Ask about equipment, SOPs, maintenance logs..."
+        rows="1"></textarea>
+
+    <button id="ask-button">
+        ➤
+    </button>
+
+</div>
+
+    </main>
+
+</div>
+<script src="/static/js/chat.js"></script>
 </body>
 </html>

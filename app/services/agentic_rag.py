@@ -2,11 +2,10 @@ from __future__ import annotations
 
 import logging
 import re
+import time
 from typing import Any
 
 logger = logging.getLogger(__name__)
-
-
 class BaseTool:
     name: str = ""
     description: str = ""
@@ -46,7 +45,10 @@ class VectorSearchTool(BaseTool):
                 ]
             )
 
+        start = time.perf_counter()
         points = self.qdrant_service.query_vectors(vector, limit=3, filter=query_filter)
+        elapsed = (time.perf_counter() - start) * 1000
+        # metrics_service.record_vector_time(elapsed)
         return self._format_points(points)
 
     def _format_points(self, points: list[Any]) -> dict[str, Any]:
@@ -104,19 +106,7 @@ class GraphSearchTool(BaseTool):
             return {"context": "", "sources": [], "document_ids": document_ids}
 
         context = "Graph facts:\n" + "\n".join(facts)
-        graph_doc_id = str(document_ids[0]) if document_ids else "graph"
-        sources = [
-            {
-                "document_id": graph_doc_id,
-                "chunk_index": 0,
-                "original_filename": "graph",
-                "text": fact,
-                "score": None,
-                "citation": f"graph:{index}",
-            }
-            for index, fact in enumerate(facts, start=1)
-        ]
-        return {"context": context, "sources": sources, "document_ids": document_ids}
+        return {"context": context, "sources": [], "document_ids": document_ids}
 
 
 class MetadataSearchTool(BaseTool):
@@ -161,7 +151,6 @@ class MetadataSearchTool(BaseTool):
             return {"context": "", "sources": [], "document_ids": []}
 
         blocks: list[str] = []
-        sources: list[dict[str, Any]] = []
         document_ids: set[str] = set()
         for index, point in enumerate(matching_points, start=1):
             payload = point.payload or {}
@@ -174,18 +163,8 @@ class MetadataSearchTool(BaseTool):
                 f"{key}={payload.get(key)}" for key in ["document_id", "original_filename", "file_type"] if payload.get(key)
             )
             blocks.append(f"[{index}] Metadata match: {metadata_summary}")
-            sources.append(
-                {
-                    "document_id": document_id,
-                    "chunk_index": chunk_index,
-                    "original_filename": original_filename,
-                    "text": metadata_summary,
-                    "score": None,
-                    "citation": f"{original_filename or document_id}#{chunk_index}",
-                }
-            )
 
-        return {"context": "\n\n---\n\n".join(blocks), "sources": sources, "document_ids": sorted(document_ids)}
+        return {"context": "\n\n---\n\n".join(blocks), "sources": [], "document_ids": sorted(document_ids)}
 
 
 class DocumentLookupTool(BaseTool):
@@ -364,9 +343,27 @@ class ToolRegistry:
         selected = [tool for _, tool in scored_tools[:5]]
 
         if self.get_tool("vector_search") not in selected:
-            selected.insert(0, self.get_tool("vector_search") or self.tools[0])
+            selected.append(self.get_tool("vector_search") or self.tools[0])
+
+        selected = sorted(
+            selected,
+            key=lambda tool: (
+                self._planning_priority(tool.name),
+                -self._score_tool(tool, lowered_query),
+                tool.name,
+            ),
+        )
 
         return selected
+
+    def _planning_priority(self, tool_name: str) -> int:
+        if tool_name == "graph_search":
+            return 0
+        if tool_name in {"metadata_search", "asset_information"}:
+            return 1
+        if tool_name in {"vector_search", "document_lookup"}:
+            return 2
+        return 3
 
     def _score_tool(self, tool: BaseTool, query: str) -> int:
         if tool.name == "vector_search":
@@ -408,10 +405,12 @@ class AgenticRAGService:
         state: dict[str, Any] = {
             "query": question,
             "context_blocks": [],
+            "graph_context_blocks": [],
             "sources": [],
             "document_ids": [],
         }
         self.reasoning_trace = []
+        retrieval_start = time.perf_counter()
 
         tools = self.registry.select_tools(question)
         if not tools:
@@ -431,7 +430,7 @@ class AgenticRAGService:
                 }
             )
             result = tool.execute(question, state)
-            state = self._merge_state(state, result)
+            state = self._merge_state(state, result, tool.name)
 
             if len(state.get("sources", [])) >= top_k * 2:
                 break
@@ -446,10 +445,23 @@ class AgenticRAGService:
                         "reason": knowledge_tool.description,
                     }
                 )
-                state = self._merge_state(state, knowledge_tool.execute(question, state))
+                state = self._merge_state(state, knowledge_tool.execute(question, state), knowledge_tool.name)
 
-        context = "\n\n---\n\n".join(state.get("context_blocks", [])) if state.get("context_blocks") else ""
+        graph_context = "\n\n---\n\n".join(state.get("graph_context_blocks", [])) if state.get("graph_context_blocks") else ""
+        retrieval_context = "\n\n---\n\n".join(state.get("context_blocks", [])) if state.get("context_blocks") else ""
+
+        context_sections: list[str] = []
+        if graph_context:
+            context_sections.append("Graph Facts:\n" + graph_context)
+        if retrieval_context:
+            context_sections.append("Retrieved Chunks:\n" + retrieval_context)
+
+        context = ""
+        if context_sections:
+            context = "====================\n" + "\n\n--------------------\n\n".join(context_sections) + "\n===================="
+
         sources = self._dedupe_sources(state.get("sources", []))
+        # metrics_service.record_retrieval_time((time.perf_counter() - retrieval_start) * 1000)
 
         return {
             "context": context,
@@ -458,14 +470,18 @@ class AgenticRAGService:
             "reasoning_trace": self.reasoning_trace,
         }
 
-    def _merge_state(self, state: dict[str, Any], tool_result: dict[str, Any]) -> dict[str, Any]:
+    def _merge_state(self, state: dict[str, Any], tool_result: dict[str, Any], tool_name: str) -> dict[str, Any]:
         context = tool_result.get("context", "")
         if context:
-            state.setdefault("context_blocks", []).append(context)
+            if tool_name in {"graph_search", "asset_information"}:
+                state.setdefault("graph_context_blocks", []).append(context)
+            else:
+                state.setdefault("context_blocks", []).append(context)
 
-        for source in tool_result.get("sources", []):
-            if source not in state.setdefault("sources", []):
-                state["sources"].append(source)
+        if self._should_add_sources(tool_name):
+            for source in tool_result.get("sources", []):
+                if source not in state.setdefault("sources", []):
+                    state["sources"].append(source)
 
         for document_id in tool_result.get("document_ids", []):
             state.setdefault("document_ids", [])
@@ -473,6 +489,17 @@ class AgenticRAGService:
                 state["document_ids"].append(document_id)
 
         return state
+
+    def _should_add_sources(self, tool_name: str) -> bool:
+        return tool_name in {
+            "vector_search",
+            "similar_incident_search",
+            "root_cause_search",
+            "maintenance_history",
+            "compliance_checker",
+            "sop_lookup",
+            "document_lookup",
+        }
 
     def _dedupe_sources(self, sources: list[dict[str, Any]]) -> list[dict[str, Any]]:
         seen: set[tuple[str, int, str]] = set()
