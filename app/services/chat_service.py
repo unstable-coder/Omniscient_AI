@@ -9,11 +9,13 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 
 from app.config import settings
 from app.services.agentic_rag import AgenticRAGService
+from app.services.compliance_service import ComplianceService
 from app.services.embedding_service import EmbeddingService
 from app.services.graph_retrieval_service import GraphRetrievalService
 from app.services.history_service import HistoryService
 # from app.services.metrics_service import metrics_service
 from app.services.qdrant_service import QdrantService
+from app.services.ticket_service import TicketService
 
 class ChatService:
     def __init__(self) -> None:
@@ -25,6 +27,8 @@ class ChatService:
         )
         self.graph_retrieval_service = GraphRetrievalService()
         self.history_service = HistoryService()
+        self.ticket_service = TicketService()
+        self.compliance_service = ComplianceService()
         self.agent = AgenticRAGService(
             embedding_service=self.embedding_service,
             qdrant_service=self.qdrant_service,
@@ -99,12 +103,13 @@ Answer using only the context above.
 
         if not context:
             answer = "I could not find enough information in the indexed documents."
-            self.history_service.save_entry(question, answer, sources)
+            self.history_service.save_entry(question, answer, sources, enterprise_actions={})
             return {
                 "question": question,
                 "answer": answer,
                 "sources": sources,
                 "context": "",
+                "enterprise_actions": {},
             }
 
         # -------------------------------------------------
@@ -129,8 +134,25 @@ Answer using only the context above.
                 if source["text"]:
                     answer += f"[{i}] {source['text'][:300]}\n\n"
 
+        ticket_suggestion = self.ticket_service.build_ticket_suggestion(question, answer, context)
+        compliance_context = "\n".join([context, *[source.get("text", "") for source in sources]])
+        compliance_result = None
+        if self.compliance_service.should_offer_compliance(compliance_context):
+            compliance_result = self.compliance_service.evaluate_context(compliance_context)
+
+        enterprise_actions = {}
+        if ticket_suggestion.get("available"):
+            enterprise_actions["ticket"] = ticket_suggestion["ticket"]
+        if compliance_result and compliance_result.get("applicable"):
+            enterprise_actions["compliance"] = compliance_result
+
         answer = answer.strip()
-        self.history_service.save_entry(question, answer, sources)
+        self.history_service.save_entry(
+            question,
+            answer,
+            sources,
+            enterprise_actions=enterprise_actions,
+        )
 
         # -------------------------------------------------
         # 6. Return API response
@@ -141,4 +163,5 @@ Answer using only the context above.
             "answer": answer,
             "sources": sources,
             "context": context,
+            "enterprise_actions": enterprise_actions,
         }

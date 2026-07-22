@@ -285,58 +285,6 @@
     "error": "",
     "content_hash": "512b30bf2a12e8e47708506ec648a73c72b0f57c7a42a791494f858103e1e0ff"
   },
-  "0aad624bff474d5789bec4fe8897896e": {
-    "document_id": "0aad624bff474d5789bec4fe8897896e",
-    "original_filename": "Maintenance_Report_1.pdf",
-    "stored_filename": "b293a954ce3342b0a550f9c6814a8c37.pdf",
-    "file_type": "application/pdf",
-    "mime_type": "application/pdf",
-    "size": 2124,
-    "uploaded_at": "2026-07-19 10:08:57.809580",
-    "status": "INDEXED",
-    "chunk_count": 1,
-    "error": "",
-    "content_hash": "009be20e279934d0befb3905916362c1e836e0adf7a12881da51139e3502b6c6"
-  },
-  "ecb6ec27aa774aef87d27a0b9321a794": {
-    "document_id": "ecb6ec27aa774aef87d27a0b9321a794",
-    "original_filename": "Maintenance_Report_2.pdf",
-    "stored_filename": "0b048aedb70b4dd49d45f13ec44d6765.pdf",
-    "file_type": "application/pdf",
-    "mime_type": "application/pdf",
-    "size": 2129,
-    "uploaded_at": "2026-07-19 10:09:21.249282",
-    "status": "INDEXED",
-    "chunk_count": 1,
-    "error": "",
-    "content_hash": "50239dace54b431a1dffe3697028fa9648b378d802b27c3f4358743afedb6012"
-  },
-  "7b66b8b244a14423aff3338b7af5e864": {
-    "document_id": "7b66b8b244a14423aff3338b7af5e864",
-    "original_filename": "Maintenance_Report_3.pdf",
-    "stored_filename": "313975347eb143ed8f7750881d5c62b7.pdf",
-    "file_type": "application/pdf",
-    "mime_type": "application/pdf",
-    "size": 2141,
-    "uploaded_at": "2026-07-19 10:09:49.841833",
-    "status": "INDEXED",
-    "chunk_count": 1,
-    "error": "",
-    "content_hash": "bb1db246ebb4ab34c06169218f37cfb7bcc7a102bb9e0c167517bf9e11d9a5b7"
-  },
-  "e12f067b9a5d4b42becb2607070f544a": {
-    "document_id": "e12f067b9a5d4b42becb2607070f544a",
-    "original_filename": "Maintenance_Report_4.pdf",
-    "stored_filename": "79112637d9364c5a9b3b80d88afa86e3.pdf",
-    "file_type": "application/pdf",
-    "mime_type": "application/pdf",
-    "size": 2139,
-    "uploaded_at": "2026-07-19 10:10:09.535729",
-    "status": "INDEXED",
-    "chunk_count": 1,
-    "error": "",
-    "content_hash": "299738c36572268b7b44f328696e371147b4837c99187359ba1e21dfad8ad908"
-  },
   "be625e9995624b6086bb697a8bda8244": {
     "document_id": "be625e9995624b6086bb697a8bda8244",
     "original_filename": "Incident_Report_1.pdf",
@@ -415,19 +363,6 @@
     "error": "",
     "content_hash": "c4bdd13bdcd448da28918d27120bf5e193f6ea85db19e79657048963e7efd9d2"
   },
-  "402f99745f10476c95c2876976e40864": {
-    "document_id": "402f99745f10476c95c2876976e40864",
-    "original_filename": "Equipment_Register.xlsx",
-    "stored_filename": "7e12c2f0593a4da4be971569b72cbb88.xlsx",
-    "file_type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-    "mime_type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-    "size": 23088,
-    "uploaded_at": "2026-07-20 17:01:31.284437",
-    "status": "FAILED",
-    "chunk_count": 0,
-    "error": "",
-    "content_hash": "6825f1a2327433dcd3a7e5cc93b644b58292b45d714c6cba209c5e40fe89fe76"
-  },
   "8e59e6e945cd4551929b2fc1978dedc9": {
     "document_id": "8e59e6e945cd4551929b2fc1978dedc9",
     "original_filename": "Cooling_Tower_CT01_1.pdf",
@@ -441,19 +376,6 @@
     "error": "",
     "content_hash": "7bfe2044ff8be4e0450bec0c426dc1c84916b86afe728436dc9d46adee8d42b3"
   },
-  "ae0306ac8e934854a73d6f2e06e14746": {
-    "document_id": "ae0306ac8e934854a73d6f2e06e14746",
-    "original_filename": "Cooling_Tower_CT01_3.pdf",
-    "stored_filename": "14fcd0146e7e404f9739b18abf944754.pdf",
-    "file_type": "application/pdf",
-    "mime_type": "application/pdf",
-    "size": 5057,
-    "uploaded_at": "2026-07-20 17:58:36.918852",
-    "status": "INDEXED",
-    "chunk_count": 1,
-    "error": "",
-    "content_hash": "f0a09591adf63b8daddab36a98a638e871f29963f2eb8be6f6ead54ff4a8bd2e"
-  },
   "5369df701b7c44c89b43baaca15c5192": {
     "document_id": "5369df701b7c44c89b43baaca15c5192",
     "original_filename": "Purchase_Order_1.pdf",
@@ -466,5 +388,18 @@
     "chunk_count": 1,
     "error": "",
     "content_hash": "c1464fd383f060729d9f80a056f068f4aece72f1b846fe751aced6b03d942ec9"
+  },
+  "4392db65da5a401fa492154f4c38f817": {
+    "document_id": "4392db65da5a401fa492154f4c38f817",
+    "original_filename": "Maintenance_Report_1.pdf",
+    "stored_filename": "3944c368a8d342e38f6c9780a69225e0.pdf",
+    "file_type": "application/pdf",
+    "mime_type": "application/pdf",
+    "size": 2124,
+    "uploaded_at": "2026-07-22 09:21:03.521676",
+    "status": "INDEXED",
+    "chunk_count": 1,
+    "error": "",
+    "content_hash": "009be20e279934d0befb3905916362c1e836e0adf7a12881da51139e3502b6c6"
   }
 }

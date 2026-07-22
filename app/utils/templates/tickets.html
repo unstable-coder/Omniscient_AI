@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tickets</title>
+  <link rel="stylesheet" href="/static/css/tickets.css" />
+</head>
+<body>
+  <nav class="navbar">
+    <div class="nav-left">
+      <h2>Omniscient AI</h2>
+    </div>
+    <div class="nav-center">
+      <a href="/api/dashboard">Dashboard</a>
+      <a href="/chat">Chat</a>
+      <a href="/">Uploads</a>
+      <a href="/admin/tickets" class="active">Tickets</a>
+    </div>
+    <div class="nav-right">
+      <span class="status-pill">Live</span>
+    </div>
+  </nav>
+
+  <main class="container">
+    <section class="page-header">
+      <div>
+        <h1>Enterprise Tickets</h1>
+        <p>Ticket records created from the chat workflow.</p>
+      </div>
+    </section>
+
+    <section class="table-card">
+      <div class="table-toolbar">
+        <div>
+          <h2>Tickets</h2>
+          <small></small>
+        </div>
+        <button id="refresh-tickets">Refresh</button>
+      </div>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Equipment</th>
+              <th>Priority</th>
+              <th>Category</th>
+              <th>Problem</th>
+              <th>Assigned Team</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="tickets-body"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <script src="/static/js/tickets.js"></script>
+</body>
+</html>

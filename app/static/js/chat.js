@@ -5,6 +5,12 @@ const historyBox = document.getElementById('history-box');
 const chatStatus = document.getElementById('chat-status');
 const clearHistoryButton = document.getElementById('clear-history');
 const emptyState = document.getElementById("empty-state");
+const enterpriseModal = document.getElementById('enterprise-modal');
+const closeModalButton = document.getElementById('close-modal');
+const ticketForm = document.getElementById('ticket-form');
+let pendingTicket = null;
+let pendingCompliance = null;
+
 function addUserMessage(text) {
     chatWindow.innerHTML += `
         <div class="message">
@@ -17,7 +23,7 @@ function addUserMessage(text) {
     chatWindow.scrollTop = chatWindow.scrollHeight;
 }
 
-function addAssistantMessage(answer, sources = []) {
+function addAssistantMessage(answer, sources = [], enterpriseActions = {}) {
 
     // Convert Markdown to HTML
     const renderedAnswer = marked.parse(answer);
@@ -47,6 +53,20 @@ function addAssistantMessage(answer, sources = []) {
         });
 
         html += `</details>`;
+    }
+
+    if (Object.keys(enterpriseActions).length) {
+        html += `
+            <div class="enterprise-actions">
+                <h4>Suggested Enterprise Actions</h4>
+        `;
+        if (enterpriseActions.ticket) {
+            html += `<button class="ticket-action" data-ticket='${JSON.stringify(enterpriseActions.ticket).replace(/'/g, '&#39;')}'>Create Ticket</button>`;
+        }
+        if (enterpriseActions.compliance) {
+            html += `<button class="compliance-action" data-compliance='${JSON.stringify(enterpriseActions.compliance).replace(/'/g, '&#39;')}'>Check Compliance</button>`;
+        }
+        html += `</div>`;
     }
 
     html += `
@@ -82,7 +102,8 @@ function showHistoryItem(history) {
 
     addAssistantMessage(
         history.answer,
-        history.sources
+        history.sources,
+        history.enterprise_actions || {}
     );
 
     chatStatus.textContent = "Loaded from history";
@@ -113,6 +134,7 @@ async function askQuestion() {
   askButton.textContent = 'Searching...';
   askButton.disabled = true;
   addUserMessage(question);
+  emptyState.remove()
   try {
     const response = await fetch('/api/chat/ask', {
       method: 'POST',
@@ -127,7 +149,7 @@ async function askQuestion() {
     }
 
     const payload = await response.json();
-    addAssistantMessage(payload.answer, payload.sources);
+    addAssistantMessage(payload.answer, payload.sources, payload.enterprise_actions || {});
     chatStatus.textContent = 'Completed';
     await loadHistory();
   } catch (err) {
@@ -154,6 +176,40 @@ async function clearHistory() {
   }
 }
 
+chatWindow.addEventListener('click', event => {
+  const ticketButton = event.target.closest('.ticket-action');
+  if (ticketButton) {
+    pendingTicket = JSON.parse(ticketButton.dataset.ticket);
+    document.getElementById('ticket-equipment').value = pendingTicket.equipment || '';
+    document.getElementById('ticket-priority').value = pendingTicket.priority || 'Medium';
+    document.getElementById('ticket-category').value = pendingTicket.category || 'Maintenance';
+    document.getElementById('ticket-problem').value = pendingTicket.problem || '';
+    document.getElementById('ticket-recommendation').value = pendingTicket.recommendation || '';
+    document.getElementById('ticket-team').value = pendingTicket.assigned_team || 'Maintenance Operations';
+    document.getElementById('ticket-status').value = pendingTicket.status || 'Open';
+    enterpriseModal.classList.remove('hidden');
+    enterpriseModal.setAttribute('aria-hidden', 'false');
+    return;
+  }
+
+  const complianceButton = event.target.closest('.compliance-action');
+  if (complianceButton) {
+    const compliance = JSON.parse(complianceButton.dataset.compliance || '{}');
+    const compliancePanel = document.createElement('div');
+    compliancePanel.className = 'enterprise-actions';
+    compliancePanel.innerHTML = `
+      <h4>Compliance Summary</h4>
+      <p><strong>Compliance Score:</strong> ${compliance.score || 0}%</p>
+      <p><strong>Status:</strong> ${compliance.status || 'FAIL'}</p>
+      <p><strong>Passed Checks:</strong> ${(compliance.passed_checks || []).join(', ') || 'None'}</p>
+      <p><strong>Missing Checks:</strong> ${(compliance.missing_checks || []).join(', ') || 'None'}</p>
+      <ul>${(compliance.suggested_improvements || []).map(item => `<li>${item}</li>`).join('')}</ul>
+    `;
+    chatWindow.appendChild(compliancePanel);
+    chatStatus.textContent = 'Compliance checklist reviewed';
+  }
+});
+
 historyBox.addEventListener('click', event => {
   const button = event.target.closest('.history-item');
   if (!button) {
@@ -177,6 +233,39 @@ historyBox.addEventListener('click', event => {
 if (clearHistoryButton) {
   clearHistoryButton.addEventListener('click', clearHistory);
 }
+
+closeModalButton?.addEventListener('click', () => {
+  enterpriseModal.classList.add('hidden');
+  enterpriseModal.setAttribute('aria-hidden', 'true');
+});
+
+ticketForm?.addEventListener('submit', async event => {
+  event.preventDefault();
+  const payload = {
+    equipment: document.getElementById('ticket-equipment').value,
+    priority: document.getElementById('ticket-priority').value,
+    category: document.getElementById('ticket-category').value,
+    problem: document.getElementById('ticket-problem').value,
+    recommendation: document.getElementById('ticket-recommendation').value,
+    assigned_team: document.getElementById('ticket-team').value,
+    status: document.getElementById('ticket-status').value,
+  };
+
+  const response = await fetch('/api/chat/tickets', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
+
+  if (response.ok) {
+    chatStatus.textContent = 'Ticket saved locally';
+    enterpriseModal.classList.add('hidden');
+    enterpriseModal.setAttribute('aria-hidden', 'true');
+  } else {
+    chatStatus.textContent = 'Ticket could not be saved';
+  }
+});
+
 askButton?.addEventListener('click', askQuestion);
 questionInput.addEventListener('keydown', event => {
   if (event.key === 'Enter' && !event.shiftKey) {
@@ -190,6 +279,32 @@ loadHistory();
 document.getElementById("new-chat").addEventListener("click", () => {
     window.location.reload();
 });
-if (emptyState) {
-   
+const micButton = document.getElementById("voice-button");
+const input = document.getElementById("question-input");
+
+const SpeechRecognition =
+    window.SpeechRecognition || window.webkitSpeechRecognition;
+
+if (SpeechRecognition) {
+
+    const recognition = new SpeechRecognition();
+
+    recognition.lang = "en-US";
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 1;
+
+    micButton.addEventListener("click", () => {
+        recognition.start();
+    });
+
+    recognition.onresult = (event) => {
+        input.value = event.results[0][0].transcript;
+    };
+
+    recognition.onerror = (event) => {
+        console.log(event.error);
+    };
+
+} else {
+    alert("Speech recognition is not supported in this browser.");
 }

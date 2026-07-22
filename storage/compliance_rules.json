@@ -1,0 +1,40 @@
+{
+  "checks": [
+    {
+      "id": "safety",
+      "label": "Safety procedures documented",
+      "keywords": [
+        "safety",
+        "hazard",
+        "risk"
+      ]
+    },
+    {
+      "id": "inspection",
+      "label": "Inspection routine defined",
+      "keywords": [
+        "inspection",
+        "check",
+        "routine"
+      ]
+    },
+    {
+      "id": "response",
+      "label": "Emergency response guidance included",
+      "keywords": [
+        "emergency",
+        "response",
+        "incident"
+      ]
+    },
+    {
+      "id": "training",
+      "label": "Training expectations described",
+      "keywords": [
+        "training",
+        "competency",
+        "operator"
+      ]
+    }
+  ]
+}

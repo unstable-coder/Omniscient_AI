@@ -43,6 +43,7 @@ class ChatResponse(BaseModel):
     answer: str
     sources: list[ChatSource]
     context: str
+    enterprise_actions: dict[str, Any] | None = None
 
 class ChatHistoryItem(BaseModel):
     id: str
@@ -50,6 +51,7 @@ class ChatHistoryItem(BaseModel):
     answer: str
     sources: list[ChatSource]
     timestamp: str
+    enterprise_actions: dict[str, Any] | None = None
 
 class QdrantHealthResponse(BaseModel):
     status: str

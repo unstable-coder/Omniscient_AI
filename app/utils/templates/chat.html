@@ -31,13 +31,14 @@
        
 
         <a href="/chat" class="active">Chat</a>
- <a href="/">Documents</a>
+ <a href="/">Uploads</a>
       
 
     </div>
 
     <div class="nav-right">
 
+        <a href="/admin/tickets" class="secondary-link"> Tickets</a>
         <button id="new-chat" class="primary-btn">
             + New Chat
         </button>
@@ -105,7 +106,7 @@
     <textarea
         id="question-input"
         placeholder="Ask about equipment, SOPs, maintenance logs..."
-        rows="1"></textarea>
+        rows="1"> </textarea><button id="voice-button">🎙️</button>
 
     <button id="ask-button">
         ➤
@@ -115,6 +116,47 @@
 
     </main>
 
+</div>
+
+<div id="enterprise-modal" class="modal hidden" aria-hidden="true">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Create Demo Ticket</h3>
+            <button id="close-modal" class="ghost-btn">×</button>
+        </div>
+        <form id="ticket-form" class="modal-form">
+            <label>Equipment
+                <input type="text" id="ticket-equipment" required />
+            </label>
+            <label>Priority
+                <select id="ticket-priority">
+                    <option>High</option>
+                    <option selected>Medium</option>
+                    <option>Low</option>
+                </select>
+            </label>
+            <label>Category
+                <input type="text" id="ticket-category" value="Maintenance" />
+            </label>
+            <label>Problem
+                <textarea id="ticket-problem" rows="3" required></textarea>
+            </label>
+            <label>Recommendation
+                <textarea id="ticket-recommendation" rows="3"></textarea>
+            </label>
+            <label>Assigned Team
+                <input type="text" id="ticket-team" value="Maintenance Operations" />
+            </label>
+            <label>Status
+                <select id="ticket-status">
+                    <option selected>Open</option>
+                    <option>In Progress</option>
+                    <option>Resolved</option>
+                </select>
+            </label>
+            <button type="submit" class="primary-btn">Save Ticket</button>
+        </form>
+    </div>
 </div>
 <script src="/static/js/chat.js"></script>
 </body>

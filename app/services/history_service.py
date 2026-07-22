@@ -18,7 +18,7 @@ class HistoryService:
         raw = self.storage.read_json(self.history_file) or []
         return [ChatHistoryItem(**item) for item in raw]
 
-    def save_entry(self, question: str, answer: str, sources: list[ChatSource]) -> None:
+    def save_entry(self, question: str, answer: str, sources: list[ChatSource], enterprise_actions: dict[str, Any] | None = None) -> None:
         history = self.read_history()
         entry = ChatHistoryItem(
             id=str(uuid.uuid4()),
@@ -26,6 +26,7 @@ class HistoryService:
             answer=answer,
             sources=sources,
             timestamp=datetime.utcnow().isoformat() + "Z",
+            enterprise_actions=enterprise_actions,
         )
         history.insert(0, entry)
         self.storage.write_json_atomic(

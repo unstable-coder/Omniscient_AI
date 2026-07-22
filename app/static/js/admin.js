@@ -115,9 +115,8 @@ function renderTable() {
         <td>${new Date(doc.uploaded_at).toLocaleString()}</td>
         <td><span class="status-chip ${doc.status}">${doc.status}</span></td>
         <td>${doc.chunk_count}</td>
-        <td>${doc.error || "-"}</td>
         <td>
-          <button class="action-button" onclick="retryDocument('${doc.document_id}')">Retry</button>
+          <button class="action-button" onclick="retryDocument('${doc.document_id}')">↻</button>
           <button class="action-button" onclick="deleteDocument('${doc.document_id}')">Delete</button>
         </td>
       </tr>

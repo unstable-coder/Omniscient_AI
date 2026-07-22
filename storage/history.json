@@ -1,0 +1,62 @@
+[
+  {
+    "id": "a4e34332-b487-4bee-a44b-c9236634a7d3",
+    "question": "what is the maintaince activity required for pump 101",
+    "answer": "Based on the provided documents, the maintenance schedule for Pump P101 includes the following activities:\n\n* **Daily:** Visual Inspection [1, 2, 3]\n* **Weekly:** Lubrication Check [1, 2, 3]\n* **Monthly:** Alignment Verification [1, 2, 3]\n* **Quarterly:** Bearing Inspection [1, 2, 3]\n* **Annual:** Complete Overhaul [1, 2, 3]",
+    "sources": [
+      {
+        "document_id": "1551c48d444f4fb7b84aba146fcd016d",
+        "chunk_index": 1,
+        "original_filename": "Pump_P101_4.pdf",
+        "text": "ABC INDUSTRIES\nEquipment Manual\nPump P101\n\n1. Equipment Overview\nThis equipment is designed for continuous industrial operation under demanding conditions. Proper\ninstallation, operation and maintenance are essential to ensure reliable performance.\n\n2. Technical Specifications\nPower Rating : 90 kW\nOperating Pressure : 6 bar\nOperating Temperature : 51 \u00b0C\nFlow Rate : 162 LPM\n\n3. Maintenance Schedule\n(cid:127) Daily Visual Inspection\n(cid:127) Weekly Lubrication Check\n(cid:127) Monthly Alignment Verification\n(cid:127) Quarterly Bearing Inspection\n(cid:127) Annual Complete Overhaul\n\n4. Troubleshooting\nHigh Vibration\nCheck bearing and shaft alignment.\nOil Leakage\nReplace mechanical seal.\nLow Pressure\nInspect suction line.\nOverheating\nCheck cooling system.\nBearing Noise\nLubricate or replace bearing.\n\n5. Safety Precautions\n(cid:127) Wear PPE before operating equipment.\n(cid:127) Disconnect power before maintenance.\n(cid:127) Never operate beyond rated pressure.\n(cid:127) Inspect lubrication regularly.\n(cid:127) Report unusual vibration immediately.",
+        "score": 0.661711,
+        "citation": "Pump_P101_4.pdf#1"
+      },
+      {
+        "document_id": "924c99cd4164416fad2cded0217375bd",
+        "chunk_index": 1,
+        "original_filename": "Pump_P101_1.pdf",
+        "text": "ABC INDUSTRIES\nEquipment Manual\nPump P101\n\n1. Equipment Overview\nThis equipment is designed for continuous industrial operation under demanding conditions. Proper\ninstallation, operation and maintenance are essential to ensure reliable performance.\n\n2. Technical Specifications\nPower Rating : 48 kW\nOperating Pressure : 17 bar\nOperating Temperature : 74 \u00b0C\nFlow Rate : 502 LPM\n\n3. Maintenance Schedule\n(cid:127) Daily Visual Inspection\n(cid:127) Weekly Lubrication Check\n(cid:127) Monthly Alignment Verification\n(cid:127) Quarterly Bearing Inspection\n(cid:127) Annual Complete Overhaul\n\n4. Troubleshooting\nHigh Vibration\nCheck bearing and shaft alignment.\nOil Leakage\nReplace mechanical seal.\nLow Pressure\nInspect suction line.\nOverheating\nCheck cooling system.\nBearing Noise\nLubricate or replace bearing.\n\n5. Safety Precautions\n(cid:127) Wear PPE before operating equipment.\n(cid:127) Disconnect power before maintenance.\n(cid:127) Never operate beyond rated pressure.\n(cid:127) Inspect lubrication regularly.\n(cid:127) Report unusual vibration immediately.",
+        "score": 0.6556136,
+        "citation": "Pump_P101_1.pdf#1"
+      },
+      {
+        "document_id": "97ef41f482fd4d9a8f6bd29912f6f7a9",
+        "chunk_index": 1,
+        "original_filename": "Pump_P101_5.pdf",
+        "text": "ABC INDUSTRIES\nEquipment Manual\nPump P101\n\n1. Equipment Overview\nThis equipment is designed for continuous industrial operation under demanding conditions. Proper\ninstallation, operation and maintenance are essential to ensure reliable performance.\n\n2. Technical Specifications\nPower Rating : 26 kW\nOperating Pressure : 8 bar\nOperating Temperature : 58 \u00b0C\nFlow Rate : 613 LPM\n\n3. Maintenance Schedule\n(cid:127) Daily Visual Inspection\n(cid:127) Weekly Lubrication Check\n(cid:127) Monthly Alignment Verification\n(cid:127) Quarterly Bearing Inspection\n(cid:127) Annual Complete Overhaul\n\n4. Troubleshooting\nHigh Vibration\nCheck bearing and shaft alignment.\nOil Leakage\nReplace mechanical seal.\nLow Pressure\nInspect suction line.\nOverheating\nCheck cooling system.\nBearing Noise\nLubricate or replace bearing.\n\n5. Safety Precautions\n(cid:127) Wear PPE before operating equipment.\n(cid:127) Disconnect power before maintenance.\n(cid:127) Never operate beyond rated pressure.\n(cid:127) Inspect lubrication regularly.\n(cid:127) Report unusual vibration immediately.",
+        "score": 0.65174353,
+        "citation": "Pump_P101_5.pdf#1"
+      }
+    ],
+    "timestamp": "2026-07-22T09:22:05.089118Z",
+    "enterprise_actions": {
+      "ticket": {
+        "equipment": "Pump System",
+        "priority": "High",
+        "category": "Maintenance",
+        "problem": "Based on the provided documents, the maintenance schedule for Pump P101 includes the following activities:\n\n* **Daily:** Visual Inspection [1, 2, 3]\n* **Weekly:** Lubrication Ch...",
+        "recommendation": "Inspect the affected asset, verify operating conditions, and review recent maintenance logs.",
+        "assigned_team": "Maintenance Operations",
+        "status": "Open"
+      },
+      "compliance": {
+        "applicable": true,
+        "score": 50,
+        "status": "WARNING",
+        "passed_checks": [
+          "Safety procedures documented",
+          "Inspection routine defined"
+        ],
+        "missing_checks": [
+          "Emergency response guidance included",
+          "Training expectations described"
+        ],
+        "suggested_improvements": [
+          "Expand the document with explicit training, emergency response, and inspection guidance.",
+          "Add a short compliance summary section to make audit readiness clearer."
+        ]
+      }
+    }
+  }
+]

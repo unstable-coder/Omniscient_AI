@@ -1,0 +1,22 @@
+[
+  {
+    "id": 1,
+    "equipment": "Generator Set",
+    "priority": "High",
+    "category": "Maintenance",
+    "problem": "The exact incident report for Boiler B101 is not explicitly available in the indexed documents (though an Incident Report 3 is listed in the metadata, its content is not provide...",
+    "recommendation": "Inspect the affected asset, verify operating conditions, and review recent maintenance logs.",
+    "assigned_team": "Maintenance Operations",
+    "status": "Open"
+  },
+  {
+    "id": 2,
+    "equipment": "Pump System",
+    "priority": "High",
+    "category": "Maintenance",
+    "problem": "Based on the provided documents, the maintenance schedule for Pump P101 includes the following activities:\n\n* **Daily:** Visual Inspection [1, 2, 3]\n* **Weekly:** Lubrication Ch...",
+    "recommendation": "Inspect the affected asset, verify operating conditions, and review recent maintenance logs.",
+    "assigned_team": "Maintenance Operations",
+    "status": "Open"
+  }
+]
