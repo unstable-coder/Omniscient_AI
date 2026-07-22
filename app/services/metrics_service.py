@@ -42,6 +42,15 @@ class MetricsService:
     def get_average_retrieval_time_ms(self) -> float:
         return self._average(self._retrieval_times)
 
+    def get_metrics_snapshot(self) -> dict[str, float]:
+        return {
+            "average_embedding_time_ms": self.get_average_embedding_time_ms(),
+            "average_vector_query_time_ms": self.get_average_vector_time_ms(),
+            "average_graph_query_time_ms": self.get_average_graph_time_ms(),
+            "average_response_time_ms": self.get_average_response_time_ms(),
+            "average_retrieval_time_ms": self.get_average_retrieval_time_ms(),
+        }
+
     @staticmethod
     def _average(values: Deque[float]) -> float:
         if not values:

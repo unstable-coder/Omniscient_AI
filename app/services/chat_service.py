@@ -14,6 +14,7 @@ from app.services.embedding_service import EmbeddingService
 from app.services.graph_retrieval_service import GraphRetrievalService
 from app.services.history_service import HistoryService
 # from app.services.metrics_service import metrics_service
+from app.services.metrics_service import metrics_service
 from app.services.qdrant_service import QdrantService
 from app.services.ticket_service import TicketService
 
@@ -97,7 +98,7 @@ Answer using only the context above.
         start = time.perf_counter()
         agent_result = self.agent.run(question, top_k=top_k)
         elapsed = (time.perf_counter() - start) * 1000
-        # metrics_service.record_response_time(elapsed)
+        metrics_service.record_response_time(elapsed)
         context = agent_result.get("context", "")
         sources = agent_result.get("sources", [])
 

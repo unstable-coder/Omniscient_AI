@@ -7,7 +7,7 @@ from pathlib import Path
 from qdrant_client import QdrantClient
 
 from app.config import settings
-from app.services.metrics_service import MetricsService
+from app.services.metrics_service import MetricsService, metrics_service
 from app.services.neo4j_loader import Neo4jLoader
 from app.services.status_service import StatusService
 
@@ -66,9 +66,5 @@ def dashboard_stats() -> dict[str, object]:
         "vectors_stored": vectors_stored,
         "graph_nodes": graph_nodes,
         "graph_relationships": graph_relationships,
-        "average_response_time_ms": metrics_service.get_average_response_time_ms(),
-        "average_retrieval_time_ms": metrics_service.get_average_retrieval_time_ms(),
-        "average_embedding_time_ms": metrics_service.get_average_embedding_time_ms(),
-        "average_graph_query_time_ms": metrics_service.get_average_graph_time_ms(),
-        "average_vector_query_time_ms": metrics_service.get_average_vector_time_ms(),
+        **metrics_service.get_metrics_snapshot(),
     }

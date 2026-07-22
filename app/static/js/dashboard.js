@@ -54,13 +54,14 @@ const cards = [
 function renderCards(stats) {
   metricsGrid.innerHTML = cards.map(card => {
     const value = stats[card.key] ?? 0;
+    const safeValue = Number.isFinite(Number(value)) ? Number(value) : 0;
     return `
       <article class="metric-card">
         <div class="metric-top">
           <div class="metric-title">${card.title}</div>
           <div class="metric-icon">${card.icon}</div>
         </div>
-        <div class="metric-value">${formatValue(value)}</div>
+        <div class="metric-value">${formatValue(safeValue)}</div>
         <div class="metric-subtitle">${card.subtitle}</div>
       </article>
     `;
@@ -68,32 +69,40 @@ function renderCards(stats) {
 }
 
 function formatValue(value) {
-  if (typeof value === 'number') {
-    return Number.isInteger(value) ? value.toLocaleString() : value.toFixed(2);
+  if (typeof value === 'number' && Number.isFinite(value)) {
+    return value >= 1000 ? value.toLocaleString() : value.toFixed(2);
   }
   return value;
+}
+
+function updateCharts(stats) {
+  const statusValues = [
+    Number(stats.documents_indexed || 0),
+    Number(stats.documents_processing || 0),
+    Number(stats.documents_failed || 0),
+  ];
+  statusChart.data.datasets[0].data = statusValues;
+  statusChart.update();
+
+  const latencyValues = [
+    Number(stats.average_embedding_time_ms || 0),
+    Number(stats.average_graph_query_time_ms || 0),
+    Number(stats.average_vector_query_time_ms || 0),
+    Number(stats.average_response_time_ms || 0),
+  ];
+  metricsChart.data.datasets[0].data = latencyValues;
+  metricsChart.update();
 }
 
 async function loadStats() {
   try {
     const response = await fetch('/api/dashboard/stats');
+    if (!response.ok) {
+      throw new Error(`Request failed with status ${response.status}`);
+    }
     const stats = await response.json();
     renderCards(stats);
-
-    statusChart.data.datasets[0].data = [
-      stats.documents_indexed,
-      stats.documents_processing,
-      stats.documents_failed,
-    ];
-    statusChart.update();
-
-    metricsChart.data.datasets[0].data = [
-      stats.average_embedding_time_ms,
-      stats.average_graph_query_time_ms,
-      stats.average_vector_query_time_ms,
-      stats.average_response_time_ms,
-    ];
-    metricsChart.update();
+    updateCharts(stats);
 
     refreshIndicator.textContent = 'Updated at ' + new Date().toLocaleTimeString();
   } catch (error) {
@@ -103,3 +112,4 @@ async function loadStats() {
 }
 
 loadStats();
+setInterval(loadStats, 5000);

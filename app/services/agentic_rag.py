@@ -5,6 +5,8 @@ import re
 import time
 from typing import Any
 
+from app.services.metrics_service import metrics_service
+
 logger = logging.getLogger(__name__)
 class BaseTool:
     name: str = ""
@@ -48,7 +50,7 @@ class VectorSearchTool(BaseTool):
         start = time.perf_counter()
         points = self.qdrant_service.query_vectors(vector, limit=3, filter=query_filter)
         elapsed = (time.perf_counter() - start) * 1000
-        # metrics_service.record_vector_time(elapsed)
+        metrics_service.record_vector_time(elapsed)
         return self._format_points(points)
 
     def _format_points(self, points: list[Any]) -> dict[str, Any]:
@@ -461,7 +463,7 @@ class AgenticRAGService:
             context = "====================\n" + "\n\n--------------------\n\n".join(context_sections) + "\n===================="
 
         sources = self._dedupe_sources(state.get("sources", []))
-        # metrics_service.record_retrieval_time((time.perf_counter() - retrieval_start) * 1000)
+        metrics_service.record_retrieval_time((time.perf_counter() - retrieval_start) * 1000)
 
         return {
             "context": context,

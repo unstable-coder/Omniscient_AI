@@ -20,6 +20,12 @@ ALLOWED_ENTITY_TYPES = {
     "WorkOrder",
     "EquipmentModel",
     "Location",
+    "EquipmentTag",
+    "Instrument",
+    "Pipeline",
+    "Valve",
+    "Sensor",
+    "ProcessUnit",
 }
 
 
@@ -152,6 +158,131 @@ class EntityExtractor:
                     }
                 )
                 break
+
+        equipment_tag_matches = set(
+            re.findall(r"\b[A-Z]{1,3}-\d{1,4}\b", text)
+        )
+        for tag in sorted(equipment_tag_matches):
+            entities.append(
+                {
+                    "type": "EquipmentTag",
+                    "name": tag,
+                    "confidence": 0.8,
+                    "evidence": text.strip(),
+                    "source_document": document_id,
+                    "chunk_id": chunk_id,
+                    "chunk_index": chunk_index,
+                }
+            )
+
+        if re.search(r"\b(?:FT|PT|PI|TI|FIC|LIC|PIC|PIT|TIC|DCS|AFC|TCV|PCV|FCV|MOV)\b", text, flags=re.IGNORECASE):
+            instrument_matches = set(
+                re.findall(r"\b(?:FT|PT|PI|TI|FIC|LIC|PIC|PIT|TIC|FCV|PCV|MOV|TCV)[-]?\d*\b", text, flags=re.IGNORECASE)
+            )
+            for instrument in sorted(
+                [match for match in instrument_matches if match.strip()]
+            ):
+                entities.append(
+                    {
+                        "type": "Instrument",
+                        "name": instrument,
+                        "confidence": 0.78,
+                        "evidence": text.strip(),
+                        "source_document": document_id,
+                        "chunk_id": chunk_id,
+                        "chunk_index": chunk_index,
+                    }
+                )
+            if not instrument_matches:
+                entities.append(
+                    {
+                        "type": "Instrument",
+                        "name": "Instrument",
+                        "confidence": 0.66,
+                        "evidence": text.strip(),
+                        "source_document": document_id,
+                        "chunk_id": chunk_id,
+                        "chunk_index": chunk_index,
+                    }
+                )
+
+        if re.search(r"\b(?:valve|CV|MV|PV|FCV|PCV|PSV|MOV|XV)\b", text, flags=re.IGNORECASE):
+            valve_matches = set(
+                re.findall(r"\b(?:CV|MV|PV|FCV|PCV|PSV|MOV|XV)[-]?\d*\b", text, flags=re.IGNORECASE)
+            )
+            for valve in sorted([match for match in valve_matches if match.strip()]):
+                entities.append(
+                    {
+                        "type": "Valve",
+                        "name": valve,
+                        "confidence": 0.77,
+                        "evidence": text.strip(),
+                        "source_document": document_id,
+                        "chunk_id": chunk_id,
+                        "chunk_index": chunk_index,
+                    }
+                )
+            if not valve_matches:
+                entities.append(
+                    {
+                        "type": "Valve",
+                        "name": "Valve",
+                        "confidence": 0.7,
+                        "evidence": text.strip(),
+                        "source_document": document_id,
+                        "chunk_id": chunk_id,
+                        "chunk_index": chunk_index,
+                    }
+                )
+
+        if re.search(r"\b(?:sensor|transmitter|thermocouple|analyzer|probe|detector)\b", lowered):
+            entities.append(
+                {
+                    "type": "Sensor",
+                    "name": "Sensor",
+                    "confidence": 0.7,
+                    "evidence": text.strip(),
+                    "source_document": document_id,
+                    "chunk_id": chunk_id,
+                    "chunk_index": chunk_index,
+                }
+            )
+
+        if re.search(r"\b(?:pipeline|pipe line|line\s*\d+|header|riser|header line)\b", lowered):
+            pipeline_name = "Pipeline"
+            line_matches = re.findall(r"\bline\s*(\d+)\b", lowered)
+            if line_matches:
+                pipeline_name = f"Pipeline {line_matches[0]}"
+            entities.append(
+                {
+                    "type": "Pipeline",
+                    "name": pipeline_name,
+                    "confidence": 0.72,
+                    "evidence": text.strip(),
+                    "source_document": document_id,
+                    "chunk_id": chunk_id,
+                    "chunk_index": chunk_index,
+                }
+            )
+
+        if re.search(
+            r"\b(?:reactor|distillation column|heat exchanger|separator|absorber|furnace|dryer|stripper|column|unit)\b",
+            lowered,
+        ):
+            process_unit_name = "ProcessUnit"
+            if match := re.search(r"\b(?:reactor|distillation column|heat exchanger|separator|absorber|furnace|dryer|stripper|column|unit)\b", lowered):
+                process_unit_name = match.group(0).title()
+            entities.append(
+                {
+                    "type": "ProcessUnit",
+                    "name": process_unit_name,
+                    "confidence": 0.72,
+                    "evidence": text.strip(),
+                    "source_document": document_id,
+                    "chunk_id": chunk_id,
+                    "chunk_index": chunk_index,
+                }
+            )
 
         if re.search(r"\b(?:seal|bearing|impeller|gasket|sensor|coupling)\b", lowered):
             entities.append(

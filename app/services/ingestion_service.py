@@ -16,6 +16,7 @@ from app.services.chunking_service import ChunkingService
 from app.services.embedding_service import EmbeddingService
 from app.services.entity_extractor import EntityExtractor
 from app.services.entity_resolver import EntityResolver
+from app.services.metrics_service import metrics_service
 from app.services.neo4j_loader import Neo4jLoader
 from app.services.qdrant_service import QdrantService
 from app.services.status_service import StatusService
@@ -221,7 +222,7 @@ class IngestionService:
         start = time.perf_counter()
         vectors = self.embedding_service.embed_texts(texts)
         elapsed = (time.perf_counter() - start) * 1000
-        # metrics_service.record_embedding_time(elapsed)
+        metrics_service.record_embedding_time(elapsed)
         print("embed_texts() returned", len(vectors))
 
         for index, (chunk, vector) in enumerate(
