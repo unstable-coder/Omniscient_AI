@@ -1,68 +1,111 @@
-<<<<<<< HEAD
-# Industrial Knowledge Intelligence Admin Document Ingestion
+# Omniscient AI
 
-A complete Python 3.11+ FastAPI admin dashboard for uploading and indexing industrial documents with Qdrant vector storage.
+Omniscient AI is a FastAPI-based industrial knowledge assistant for ingesting documents, indexing them, and answering questions with retrieval-augmented generation (RAG). The project also includes demo enterprise features for maintenance ticketing and compliance checking for hackathon-style demonstrations.
 
-## Features
+## What this project includes
 
-- Drag-and-drop and multi-file upload
-- Local original storage and safe status tracking
-- Modular parsers for PDF, DOCX, PPTX, XLSX, CSV, JSON, XML, HTML, YAML, images, EML, ZIP
-- Structure-aware chunking with overlap and metadata preservation
-- Batched open-source embeddings via `sentence-transformers`
-- Qdrant Cloud vector upsert and document deletion
-- Status polling, retry, and delete actions in the dashboard
+- Multi-file document upload and ingestion
+- Document parsing for PDFs, DOCX, XLSX, CSV, text, images, and more
+- Vector search with Qdrant
+- Graph-aware retrieval support for Neo4j
+- Chat UI for asking questions over indexed documents
+- Demo maintenance ticket creation workflow
+- Demo compliance checklist evaluation for SOP/manual-style content
 
-## Setup
+## Requirements
 
-1. Create a virtual environment
+- Python 3.11+
+- pip
+- A working environment for the following optional integrations:
+  - Qdrant
+  - Neo4j
+  - Google Gemini API key
+
+## Quick start (Windows PowerShell)
+
+1. Clone the repository and enter the project folder
 
 ```powershell
-python -m venv venv
-venv\Scripts\activate
+cd C:\path\to\omniscient
 ```
 
-2. Install dependencies
+2. Create and activate a virtual environment
+
+```powershell
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+```
+
+3. Install dependencies
 
 ```powershell
 pip install -r requirements.txt
 ```
 
-3. Copy the example environment file
+4. Create a `.env` file in the project root
 
-```powershell
-copy .env.example .env
+Example:
+
+```env
+QDRANT_URL=
+QDRANT_API_KEY=
+QDRANT_COLLECTION=
+EMBEDDING_MODEL=
+EMBEDDING_BATCH_SIZE=
+CHUNK_SIZE=
+CHUNK_OVERLAP=
+UPLOAD_DIR=storage/uploads
+TEMP_DIR=storage/temp
+STATUS_FILE=storage/status/documents.json
+MAX_UPLOAD_SIZE_MB=
+APP_HOST=127.0.0.1
+APP_PORT=8000
+GOOGLE_API_KEY=
+GEMINI_MODEL=
+NEO4J_URI=
+NEO4J_USER=
+NEO4J_PASSWORD=
+NEO4J_DATABASE=
+AURA_INSTANCEID=
+AURA_INSTANCENAME=
 ```
 
-4. Configure `.env` with your Qdrant Cloud values
-
-5. Run the application
+5. Run the app
 
 ```powershell
-uvicorn app.main:app --reload
+python -m uvicorn app.main:app --reload
 ```
 
-6. Open the admin dashboard
+6. Open the app in your browser
 
-`http://127.0.0.1:8000/`
+- Admin/upload page: http://127.0.0.1:8000/
+- Chat page: http://127.0.0.1:8000/chat
+- Demo tickets admin page: http://127.0.0.1:8000/admin/tickets
 
-## Tests
+## Demo enterprise features
+
+- After an AI response, the app may show Suggested Enterprise Actions.
+- If the answer looks maintenance-related, a Create Ticket action appears.
+- If the retrieved context looks like an SOP/manual/policy, a Check Compliance action appears.
+- Tickets are stored locally in `storage/demo_tickets.json`.
+- Compliance rules are stored in `storage/compliance_rules.json`.
+
+## Project structure
+
+- `app/main.py` — FastAPI app entry point
+- `app/api/` — API routes for chat, admin, history, and tickets
+- `app/services/` — business logic for chat, ingestion, tickets, and compliance
+- `app/utils/templates/` — HTML templates for the UI
+- `app/static/` — CSS and JavaScript assets
+- `tests/` — unit tests for the core services
+
+## Running tests
 
 ```powershell
-pip install pytest
-pytest
+pytest -q
 ```
-
-## Storage Layout
-
-- `storage/uploads/` — saved originals
-- `storage/temp/` — temporary extraction files
-- `storage/status/documents.json` — atomic status record
 
 ## Notes
 
-- No database is required
-- Qdrant collection is created only if missing
-- Original file deletion also removes Qdrant points by `document_id`
-- Missing OCR support does not prevent startup, but image OCR is only used if `pytesseract` and `Pillow` are available
-=======
+- The app can run locally without a full production backend, but document ingestion and chat answers depend on your configured Qdrant, Gemini, and Neo4j services.
+- The ticketing and compliance features are intentionally demo-focused and modular so they can later be replaced with real enterprise integrations.
